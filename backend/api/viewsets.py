@@ -98,7 +98,9 @@ class PrinterViewSet(
         if self.request.query_params.get('with_archived') == 'true':
             qs = Printer.with_archived.filter(user=self.request.user)
         else:
-            qs = Printer.objects.filter(user=self.request.user)
+            qsuserprinters = Printer.objects.filter(user=self.request.user)
+            qsgroupprinters = Printer.objects.filter(groups__in=self.request.user.groups.all())
+            qs = qsuserprinters | qsgroupprinters
 
         return qs.select_related('current_print', 'printerprediction')
 

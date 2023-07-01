@@ -32,7 +32,7 @@ from lib import cache
 def index(request):
     if request.user.is_authenticated:
         if hasattr(settings, 'ACCOUNT_SIGNUP_REDIRECT_URL') and \
-                Printer.objects.filter(user=request.user).count() == 0:
+                Printer.objects.filter(user=request.user).count() == 0 or Printer.objects.filter(groups__in=request.user.groups.all()).count() == 0:
             return redirect(settings.ACCOUNT_SIGNUP_REDIRECT_URL)
         else:
             return redirect('/printers/')

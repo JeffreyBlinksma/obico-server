@@ -8,7 +8,7 @@ from secrets import token_hex
 from django.db import models, IntegrityError
 from jsonfield import JSONField
 import uuid
-from django.contrib.auth.models import AbstractUser, UserManager as BaseUserManager
+from django.contrib.auth.models import AbstractUser, Group, UserManager as BaseUserManager
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -152,7 +152,8 @@ class Printer(SafeDeleteModel):
 
     name = models.CharField(max_length=256, null=False)
     auth_token = models.CharField(max_length=256, unique=True, null=False, blank=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    groups = models.ManyToManyField(Group, null=True)
     current_print = models.OneToOneField('Print', on_delete=models.SET_NULL, null=True, blank=True, related_name='not_used')
     action_on_failure = models.CharField(
         max_length=256,

@@ -10,7 +10,9 @@ def get_printer_or_404(pk, request, with_archived=False):
     return get_object_or_404(obj_filter, pk=pk, user=request.user)
 
 def get_printers(request):
-    return Printer.objects.filter(user=request.user)
+    user_printers = Printer.objects.filter(user=request.user)
+    group_printers = Printer.objects.filter(groups__in=request.user.groups.all())
+    return user_printers | group_printers
 
 def get_prints(request):
     return Print.objects.filter(user=request.user)
